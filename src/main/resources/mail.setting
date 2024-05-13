@@ -1,0 +1,5 @@
+host = smtp.qq.com
+port = 587
+from = wilson_lyc@foxmail.com
+user = wilson_lyc
+pass = uebyxtmqqjsmbbgb
