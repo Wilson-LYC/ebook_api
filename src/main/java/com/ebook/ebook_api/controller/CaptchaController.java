@@ -24,6 +24,9 @@ public class CaptchaController {
 
     /**
      * 验证验证码
+     * @param captcha 验证码
+     * @param key 验证码key
+     * @return 验证结果
      */
     @GetMapping("/{key}")
     public JSONObject verifyCaptcha(@Param("captcha") String captcha, @PathVariable("key") String key) {
