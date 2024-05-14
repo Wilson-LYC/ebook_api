@@ -1,40 +1,48 @@
 package com.ebook.ebook_api.service.impl;
 
+import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.CryptoException;
+import cn.hutool.crypto.SmUtil;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import cn.hutool.extra.mail.MailException;
 import cn.hutool.extra.mail.MailUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.ebook.ebook_api.service.CaptchaService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CaptchaServiceImpl implements CaptchaService {
-    @Autowired
-    private RedisTemplate redisTemplate;
-
-    @Override
-    public String create() {
-        int captcha= RandomUtil.randomInt(1000, 10000);
-        return String.valueOf(captcha);
+    SymmetricCrypto sm4 = SmUtil.sm4();
+    /**
+     * 生成验证码
+     * @return 验证码
+     */
+    private JSONObject create() {
+        JSONObject res=new JSONObject();
+        String captcha= String.valueOf(RandomUtil.randomInt(1000, 10000));
+        res.put("captcha",captcha);
+        String key=sm4.encryptHex(captcha);
+        res.put("key",key);
+        return res;
     }
 
-    @Override
-    public void save(String email, String captcha) {
-        String key="captcha:"+email;
-        redisTemplate.opsForValue().set(key,captcha);
-        redisTemplate.expire(key,5*60,java.util.concurrent.TimeUnit.SECONDS);
+    private String getContent(String captcha){
+        return "【公式E点通】用户您好！您的验证码是："+captcha+"，验证码5分钟内有效。请勿将验证码随意转发给他人！";
     }
 
+    /**
+     * 发送验证码至邮箱
+     * @param email 邮箱
+     * @return 返回发送结果
+     */
     @Override
     public JSONObject send(String email) {
         JSONObject res=new JSONObject();
-        String captcha=this.create();//生成验证码
-        this.save(email,captcha);//保存验证码
-        String content="【公式E点通】用户您好！您的验证码是："+captcha+"，验证码5分钟内有效。请勿将验证码随意转发给他人！";
+        JSONObject captchaJson=this.create();
+        String content=this.getContent(captchaJson.getString("captcha"));
         try{
-            MailUtil.send(email,"《公式E点通》验证码",content,false);//发送邮件
+            MailUtil.send(email,"公式E点通",content,false);//发送邮件
         }catch (MailException e){
             res.put("code",500);
             res.put("msg","邮件发送失败");
@@ -43,6 +51,36 @@ public class CaptchaServiceImpl implements CaptchaService {
         }
         res.put("code",200);
         res.put("msg","邮件发送成功");
+        JSONObject data=new JSONObject();
+        data.put("key",captchaJson.getString("key"));
+        res.put("data",data);
+        return res;
+    }
+
+    /**
+     * 验证验证码
+     * @param captcha 验证码
+     * @param key 签名
+     * @return 返回验证结果
+     */
+    @Override
+    public JSONObject verify(String captcha, String key) {
+        JSONObject res=new JSONObject();
+        String temp;
+        try{
+            temp=sm4.decryptStr(key, CharsetUtil.CHARSET_UTF_8);
+        }catch (CryptoException e){
+            res.put("code",500);
+            res.put("msg","签名错误");
+            return res;
+        }
+        if(temp.equals(captcha)){
+            res.put("code",200);
+            res.put("msg","验证码正确");
+        }else{
+            res.put("code",500);
+            res.put("msg","验证码错误");
+        }
         return res;
     }
 }

@@ -1,11 +1,14 @@
 server:
   port: 8080
+
 spring:
+  # mysql
   datasource:
     url: jdbc:mysql://localhost:3306/ebook?useSSL=false&serverTimezone=shanghai
     username: root
     password: root
   data:
+    # redis
     redis:
       host: localhost
       port: 6379
