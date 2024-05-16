@@ -9,8 +9,9 @@ import cn.hutool.extra.mail.MailException;
 import cn.hutool.extra.mail.MailUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.ebook.ebook_api.service.CaptchaService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
+@Slf4j
 @Service
 public class CaptchaServiceImpl implements CaptchaService {
     SymmetricCrypto sm4 = SmUtil.sm4();
@@ -28,7 +29,7 @@ public class CaptchaServiceImpl implements CaptchaService {
     }
 
     private String getContent(String captcha){
-        return "【公式E点通】用户您好！您的验证码是："+captcha+"，验证码5分钟内有效。请勿将验证码随意转发给他人！";
+        return "【公式E点通】用户您好！您的验证码是："+captcha+"。请勿将验证码随意转发给他人！";
     }
 
     /**
@@ -45,12 +46,12 @@ public class CaptchaServiceImpl implements CaptchaService {
             MailUtil.send(email,"公式E点通",content,false);//发送邮件
         }catch (MailException e){
             res.put("code",500);
-            res.put("msg","邮件发送失败");
-            res.put("error",e.getMessage());
+            res.put("msg","验证码发送失败");
+            log.error("邮箱验证码发送失败",e);
             return res;
         }
         res.put("code",200);
-        res.put("msg","邮件发送成功");
+        res.put("msg","验证码发送成功");
         JSONObject data=new JSONObject();
         data.put("key",captchaJson.getString("key"));
         res.put("data",data);
@@ -60,7 +61,7 @@ public class CaptchaServiceImpl implements CaptchaService {
     /**
      * 验证验证码
      * @param captcha 验证码
-     * @param key 签名
+     * @param key 验证码key
      * @return 返回验证结果
      */
     @Override
@@ -71,7 +72,8 @@ public class CaptchaServiceImpl implements CaptchaService {
             temp=sm4.decryptStr(key, CharsetUtil.CHARSET_UTF_8);
         }catch (CryptoException e){
             res.put("code",500);
-            res.put("msg","签名错误");
+            res.put("msg","请重新获取验证码");
+            log.error("验证码key格式错误",e);
             return res;
         }
         if(temp.equals(captcha)){
