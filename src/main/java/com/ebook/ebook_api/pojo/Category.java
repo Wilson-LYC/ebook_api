@@ -8,13 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/**
- * @title: Category
- * @Author LuoZiHao
- * @Date: 2024/5/16 下午1:52
- * @Version 1.0
- */
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

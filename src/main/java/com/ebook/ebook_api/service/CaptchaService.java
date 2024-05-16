@@ -1,9 +1,11 @@
 package com.ebook.ebook_api.service;
 
-import com.alibaba.fastjson2.JSONObject;
+import com.ebook.ebook_api.dto.ResponseDto;
 
 public interface CaptchaService {
-    JSONObject send(String email);
+    ResponseDto send_v1(String email);
 
-    JSONObject verify(String captcha, String key);
+    ResponseDto verify_v1(String captcha, String key);
+    ResponseDto verify_v2(String email, String captcha);
+    ResponseDto send_v2(String email);
 }

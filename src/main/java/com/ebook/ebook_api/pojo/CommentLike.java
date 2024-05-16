@@ -6,17 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/**
- * @title: Comment_like
- * @Author LuoZiHao
- * @Date: 2024/5/16 下午2:23
- * @Version 1.0
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Comment_like {
+public class CommentLike {
     private int cid;
     private int uid;
     private String createTime;

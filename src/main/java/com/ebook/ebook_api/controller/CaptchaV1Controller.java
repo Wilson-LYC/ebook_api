@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v1/captcha")
 @Tag(name = "验证码接口")
-public class CaptchaController {
+public class CaptchaV1Controller {
     @Autowired
     CaptchaService captchaService;
 
     /**
-     * 发送验证码
+     * 发送验证码到邮箱
      * @param email 邮箱
      * @return 发送结果
      */
-    @Operation(summary = "发送验证码")
+    @Operation(summary = "发送验证码到邮箱")
     @PostMapping("")
     public JSONObject getCaptcha(
             @Parameter(description = "邮箱", required = true)
             @Param("email") String email) {
-        return captchaService.send(email);
+        return captchaService.send_v1(email);
     }
 
     /**
@@ -42,6 +42,6 @@ public class CaptchaController {
             @Param("captcha") String captcha,
             @Parameter(description = "验证码key", required = true)
             @PathVariable("key") String key) {
-        return captchaService.verify(captcha, key);
+        return captchaService.verify_v1(captcha, key);
     }
 }

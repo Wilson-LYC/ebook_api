@@ -8,12 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/**
- * @title: Function
- * @Author LuoZiHao
- * @Date: 2024/5/16 下午2:03
- * @Version 1.0
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

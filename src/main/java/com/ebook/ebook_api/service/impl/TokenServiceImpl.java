@@ -7,8 +7,11 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.ebook.ebook_api.dto.ResponseDto;
+import com.ebook.ebook_api.mapper.AccountMapper;
 import com.ebook.ebook_api.pojo.Account;
 import com.ebook.ebook_api.service.TokenService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -17,6 +20,9 @@ import java.util.Date;
 
 @Service
 public class TokenServiceImpl implements TokenService {
+    @Autowired
+    AccountMapper accountMapper;
+
     /**
      * 生成token
      * @param account 帐号信息
@@ -59,20 +65,25 @@ public class TokenServiceImpl implements TokenService {
         return res;
     }
 
+    /**
+     * 登录
+     * @param email 邮箱
+     * @param password 密码
+     * @return 登录结果
+     */
     @Override
-    public JSONObject login(String email, String password) {
-        JSONObject res=new JSONObject();
-        //模拟数据库查询
-        Account account=new Account();
-        account.setId(1);
-        account.setEmail(email);
-        String token=create(account);
-        res.put("code",200);
-        res.put("msg","登录成功");
-        JSONObject data=new JSONObject();
-        data.put("account",account.toJson());
-        data.put("token",token);
-        res.put("data",data);
-        return res;
+    public ResponseDto login(String email, String password) {
+        Account account = accountMapper.selectByEmail(email);
+        if (account == null) {
+            return new ResponseDto(400, "用户不存在");
+        }
+        if (!account.getPassword().equals(password)) {
+            return new ResponseDto(400, "密码错误");
+        }
+        String token = create(account);
+        JSONObject data = new JSONObject();
+        data.put("token", token);
+        data.put("user", account.toJson());
+        return new ResponseDto(200, "登录成功", data);
     }
 }

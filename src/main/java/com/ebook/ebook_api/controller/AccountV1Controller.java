@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/account")
-@Tag(name = "帐号接口")
-public class AccountController {
+@Tag(name = "帐号接口",description = "v1")
+public class AccountV1Controller {
     @Autowired
     AccountService accountService;
+
     @Operation(summary = "注册")
     @PostMapping("")
     public JSONObject register(
@@ -26,5 +27,19 @@ public class AccountController {
             @Parameter(description = "验证码key")
             @RequestParam String key){
         return accountService.register(email, password, captcha, key);
+    }
+
+    @Operation(summary = "忘记密码（重置密码）")
+    @PutMapping("/pwd/forget")
+    public JSONObject forgetPassword(
+            @Parameter(description = "邮箱")
+            @RequestParam String email,
+            @Parameter(description = "新密码")
+            @RequestParam String password,
+            @Parameter(description = "验证码")
+            @RequestParam String captcha,
+            @Parameter(description = "验证码key")
+            @RequestParam String key){
+        return accountService.forgetPassword(email,password, captcha, key);
     }
 }
