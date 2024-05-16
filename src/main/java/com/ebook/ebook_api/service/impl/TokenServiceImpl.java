@@ -10,6 +10,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ebook.ebook_api.dto.ResponseDto;
 import com.ebook.ebook_api.mapper.AccountMapper;
 import com.ebook.ebook_api.pojo.Account;
+import com.ebook.ebook_api.service.CaptchaService;
 import com.ebook.ebook_api.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,8 @@ import java.util.Date;
 public class TokenServiceImpl implements TokenService {
     @Autowired
     AccountMapper accountMapper;
-
+    @Autowired
+    CaptchaService captchaService;
     /**
      * 生成token
      * @param account 帐号信息
@@ -66,13 +68,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     /**
-     * 登录
+     * 密码登录
      * @param email 邮箱
      * @param password 密码
      * @return 登录结果
      */
     @Override
-    public ResponseDto login(String email, String password) {
+    public ResponseDto loginByPwd(String email, String password) {
         Account account = accountMapper.selectByEmail(email);
         if (account == null) {
             return new ResponseDto(400, "用户不存在");
@@ -80,6 +82,31 @@ public class TokenServiceImpl implements TokenService {
         if (!account.getPassword().equals(password)) {
             return new ResponseDto(400, "密码错误");
         }
+        String token = create(account);
+        JSONObject data = new JSONObject();
+        data.put("token", token);
+        data.put("user", account.toJson());
+        return new ResponseDto(200, "登录成功", data);
+    }
+
+    /**
+     * 验证码登录
+     * @param email 邮箱
+     * @param captcha 验证码
+     * @return 登录结果
+     */
+    @Override
+    public ResponseDto loginByCaptcha(String email, String captcha) {
+        //检查用户是否存在
+        Account account = accountMapper.selectByEmail(email);
+        if (account == null) {
+            return new ResponseDto(400, "用户不存在");
+        }
+        //获取验证码
+        if (captchaService.verify_v2(email,captcha).getCode() != 200){
+            return new ResponseDto(400, "验证码错误");
+        }
+        //生成token
         String token = create(account);
         JSONObject data = new JSONObject();
         data.put("token", token);

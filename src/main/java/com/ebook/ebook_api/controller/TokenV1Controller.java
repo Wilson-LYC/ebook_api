@@ -18,17 +18,27 @@ public class TokenV1Controller {
     /**
      * 登录
      * @param email 用户邮箱
-     * @param password
-     * @return
+     * @param password 用户密码
+     * @return token
      */
     @Operation(summary = "登录")
-    @PostMapping("")
+    @PostMapping("/pwd")
     public JSONObject login(
             @Parameter(description = "邮箱")
             @RequestParam String email,
             @Parameter(description = "密码")
             @RequestParam String password){
-        return tokenService.login(email, password);
+        return tokenService.loginByPwd(email, password);
+    }
+
+    @Operation(summary = "验证码登录")
+    @PostMapping("/captcha")
+    public JSONObject loginByCaptcha(
+            @Parameter(description = "邮箱")
+            @RequestParam String email,
+            @Parameter(description = "验证码")
+            @RequestParam String captcha){
+        return tokenService.loginByCaptcha(email, captcha);
     }
 
     @GetMapping("/{token}")

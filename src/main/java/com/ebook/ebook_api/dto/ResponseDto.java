@@ -14,4 +14,7 @@ public class ResponseDto extends JSONObject {
         this.put("msg", msg);
         this.put("data", data);
     }
+    public int getCode(){
+        return this.getIntValue("code");
+    }
 }
