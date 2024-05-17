@@ -103,7 +103,7 @@ public class TokenServiceImpl implements TokenService {
             return new ResponseDto(400, "用户不存在");
         }
         //获取验证码
-        if (captchaService.verify_v2(email,captcha).getCode() != 200){
+        if (captchaService.verify(email,captcha).getCode() != 200){
             return new ResponseDto(400, "验证码错误");
         }
         //生成token

@@ -37,67 +37,12 @@ public class CaptchaServiceImpl implements CaptchaService {
     }
 
     /**
-     * 生成邮件内容 v1
+     * 生成邮件内容
      * @param captcha 验证码
      * @return 邮件内容
      */
-    private String getContent_v1(String captcha){
-        return "【公式E点通】用户您好！您的验证码是："+captcha+"。";
-    }
-
-    /**
-     * 生成邮件内容 v2
-     * @param captcha 验证码
-     * @return 邮件内容
-     */
-    private String getContent_v2(String captcha){
+    private String getContent(String captcha){
         return "【公式E点通】用户您好！您的验证码是："+captcha+"。有效期5分钟。";
-    }
-
-    /**
-     * 发送验证码至邮箱 v1
-     * @param email 邮箱
-     * @return 返回发送结果
-     */
-    @Override
-    public ResponseDto send_v1(String email) {
-        //生成验证码
-        JSONObject captchaJson=this.create();
-        //生成邮件内容
-        String content=this.getContent_v1(captchaJson.getString("captcha"));
-        //发送邮件
-        try{
-            MailUtil.send(email,"公式E点通",content,false);
-        }catch (MailException e){
-            log.error("邮箱验证码发送失败",e);
-            return new ResponseDto(500,"邮件发送失败，请检查邮箱是否正确");
-        }
-        JSONObject data=new JSONObject();
-        data.put("key",captchaJson.getString("key"));
-        data.put("tips","核验验证码时，验证码和key需要一同传递");
-        return new ResponseDto(200,"邮件发送成功",data);
-    }
-
-    /**
-     * 验证验证码 v1
-     * @param captcha 验证码
-     * @param key 验证码key
-     * @return 返回验证结果
-     */
-    @Override
-    public ResponseDto verify_v1(String captcha, String key) {
-        String temp;
-        try{
-            temp=sm4.decryptStr(key, CharsetUtil.CHARSET_UTF_8);
-        }catch (CryptoException e){
-            log.error("验证码key解密错误",e);
-            return new ResponseDto(400,"请重新获取验证码");
-        }
-        if(temp.equals(captcha)){
-            return new ResponseDto(200,"验证码正确");
-        }else{
-            return new ResponseDto(400,"验证码错误");
-        }
     }
 
     /**
@@ -115,6 +60,12 @@ public class CaptchaServiceImpl implements CaptchaService {
         //设置过期时间 5分钟
         redisTemplate.expire(key,300,java.util.concurrent.TimeUnit.SECONDS);
     }
+
+    /**
+     * 获取验证码
+     * @param email 邮箱
+     * @return 验证码
+     */
     private String getCaptcha(String email){
         String key="captcha:"+email;
         //检查当前key是否存在
@@ -123,8 +74,14 @@ public class CaptchaServiceImpl implements CaptchaService {
         }
         return (String) redisTemplate.opsForValue().get(key);
     }
+
+    /**
+     * 发送验证码
+     * @param email 邮箱
+     * @return 返回发送结果
+     */
     @Override
-    public ResponseDto send_v2(String email) {
+    public ResponseDto send(String email) {
         //生成验证码
         JSONObject captcha= this.create();
         //保存验证码
@@ -135,7 +92,7 @@ public class CaptchaServiceImpl implements CaptchaService {
             return new ResponseDto(500,"系统错误，请稍后再试");
         }
         //生成邮件内容
-        String content=this.getContent_v2(captcha.getString("captcha"));
+        String content=this.getContent(captcha.getString("captcha"));
         //发送邮件
         try{
             MailUtil.send(email,"公式E点通",content,false);
@@ -147,13 +104,13 @@ public class CaptchaServiceImpl implements CaptchaService {
     }
 
     /**
-     * 验证验证码 v2
+     * 验证验证码
      * @param email 邮箱
      * @param captcha 验证码
      * @return 返回验证结果
      */
     @Override
-    public ResponseDto verify_v2(String email, String captcha) {
+    public ResponseDto verify(String email, String captcha) {
         //获取验证码
         String temp=this.getCaptcha(email);
         if(temp==null){

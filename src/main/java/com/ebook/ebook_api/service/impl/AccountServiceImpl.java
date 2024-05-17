@@ -23,18 +23,17 @@ public class AccountServiceImpl implements AccountService {
      * @param email 邮箱
      * @param password 密码
      * @param captcha 验证码
-     * @param key 验证码key
      * @return 注册结果
      */
     @Override
-    public ResponseDto register(String email, String password, String captcha, String key) {
-        // 验证码校验
-        if (captchaService.verify_v1(captcha, key).getInteger("code") != 200){
-            return new ResponseDto(400, "验证码错误");
-        }
+    public ResponseDto register(String email, String password, String captcha) {
         // 检查邮箱是否已被注册
         if (accountMapper.selectByEmail(email) != null){
             return new ResponseDto(400, "邮箱已被注册");
+        }
+        // 验证码校验
+        if (captchaService.verify(email, captcha).getCode() != 200){
+            return new ResponseDto(400, "验证码错误");
         }
         // 注册
         try{
@@ -54,13 +53,12 @@ public class AccountServiceImpl implements AccountService {
      * @param email 邮箱
      * @param password 新密码
      * @param captcha 验证码
-     * @param key 验证码key
      * @return 重置密码结果
      */
     @Override
-    public ResponseDto forgetPassword(String email, String password, String captcha, String key) {
+    public ResponseDto forgetPassword(String email, String password, String captcha) {
         // 验证码校验
-        if (captchaService.verify_v1(captcha, key).getInteger("code") != 200){
+        if (captchaService.verify(email,captcha).getCode() != 200){
             return new ResponseDto(400, "验证码错误");
         }
         // 查找用户

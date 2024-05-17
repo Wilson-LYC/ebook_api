@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v1/account")
 @Tag(name = "帐号接口",description = "v1")
-public class AccountV1Controller {
+public class AccountController_V1 {
     @Autowired
     AccountService accountService;
 
@@ -23,10 +23,8 @@ public class AccountV1Controller {
             @Parameter(description = "密码")
             @RequestParam String password,
             @Parameter(description = "验证码")
-            @RequestParam String captcha,
-            @Parameter(description = "验证码key")
-            @RequestParam String key){
-        return accountService.register(email, password, captcha, key);
+            @RequestParam String captcha){
+        return accountService.register(email, password, captcha);
     }
 
     @Operation(summary = "忘记密码（重置密码）")
@@ -37,9 +35,7 @@ public class AccountV1Controller {
             @Parameter(description = "新密码")
             @RequestParam String password,
             @Parameter(description = "验证码")
-            @RequestParam String captcha,
-            @Parameter(description = "验证码key")
-            @RequestParam String key){
-        return accountService.forgetPassword(email,password, captcha, key);
+            @RequestParam String captcha){
+        return accountService.forgetPassword(email,password, captcha);
     }
 }
