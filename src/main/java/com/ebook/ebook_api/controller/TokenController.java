@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Token接口",description = "v1")
 @RestController
 @RequestMapping("/v1/token")
-public class TokenV1Controller {
+public class TokenController {
     @Autowired
     TokenService tokenService;
 

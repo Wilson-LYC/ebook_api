@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v1/captcha")
 @Tag(name = "验证码接口")
-public class CaptchaController_V1 {
+public class CaptchaController {
     @Autowired
     CaptchaService captchaService;
 

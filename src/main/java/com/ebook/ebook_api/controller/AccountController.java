@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v1/account")
 @Tag(name = "帐号接口",description = "v1")
-public class AccountController_V1 {
+public class AccountController {
     @Autowired
     AccountService accountService;
 

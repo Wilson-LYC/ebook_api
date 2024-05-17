@@ -16,12 +16,6 @@ import lombok.ToString;
 public class Category {
     private int id;
     private String name;
-    private String icon;
-    private String intro;
-    @TableField("createtime")
-    private String createTime;
-    @TableField("updatetime")
-    private String updateTime;
 
     public JSONObject toJson() {
         return JSONObject.from(this);
