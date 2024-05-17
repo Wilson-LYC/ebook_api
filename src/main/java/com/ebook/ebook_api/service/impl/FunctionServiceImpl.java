@@ -12,10 +12,7 @@ import com.ebook.ebook_api.service.FunctionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class FunctionServiceImpl implements FunctionService {
@@ -44,6 +41,22 @@ public class FunctionServiceImpl implements FunctionService {
         }
         JSONObject data=new JSONObject();
         data.put("function",functionArray);
-        return new ResponseDto(200, "获取函数目录成功", data);
+        return new ResponseDto(200, "成功", data);
+    }
+
+    /**
+     * 获取函数详情
+     * @param id 函数id
+     * @return 函数详情
+     */
+    @Override
+    public ResponseDto getFunctionById(String id) {
+        Function function = functionMapper.selectById(id);
+        if (function == null) {
+            return new ResponseDto(404, "函数不存在");
+        }
+        JSONObject data = new JSONObject();
+        data.put("function", function.toJson());
+        return new ResponseDto(200, "成功", data);
     }
 }

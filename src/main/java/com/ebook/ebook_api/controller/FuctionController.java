@@ -3,9 +3,11 @@ package com.ebook.ebook_api.controller;
 import com.alibaba.fastjson2.JSONObject;
 import com.ebook.ebook_api.service.FunctionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,5 +21,13 @@ public class FuctionController {
     @GetMapping("/catalogue")
     public JSONObject getCatalogue() {
         return functionService.getCatalogue();
+    }
+    @Operation(summary = "获取函数详情")
+    @GetMapping("/{id}")
+    public JSONObject function(
+            @Parameter(description = "函数id")
+            @PathVariable String id
+    ) {
+        return functionService.getFunctionById(id);
     }
 }

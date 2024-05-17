@@ -5,4 +5,6 @@ import com.ebook.ebook_api.dto.ResponseDto;
 
 public interface FunctionService {
     ResponseDto getCatalogue();
+
+    ResponseDto getFunctionById(String id);
 }
