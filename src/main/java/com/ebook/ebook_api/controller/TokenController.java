@@ -15,12 +15,6 @@ public class TokenController {
     @Autowired
     TokenService tokenService;
 
-    /**
-     * 登录
-     * @param email 用户邮箱
-     * @param password 用户密码
-     * @return token
-     */
     @Operation(summary = "登录")
     @PostMapping("/pwd")
     public JSONObject login(
@@ -31,8 +25,8 @@ public class TokenController {
         return tokenService.loginByPwd(email, password);
     }
 
-    @Operation(summary = "验证码登录")
-    @PostMapping("/captcha")
+    @Operation(summary = "验证码登录+自动注册")
+    @PostMapping("")
     public JSONObject loginByCaptcha(
             @Parameter(description = "邮箱")
             @RequestParam String email,

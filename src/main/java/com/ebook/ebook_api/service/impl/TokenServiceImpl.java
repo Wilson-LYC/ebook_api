@@ -10,6 +10,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ebook.ebook_api.dto.ResponseDto;
 import com.ebook.ebook_api.mapper.AccountMapper;
 import com.ebook.ebook_api.pojo.Account;
+import com.ebook.ebook_api.service.AccountService;
 import com.ebook.ebook_api.service.CaptchaService;
 import com.ebook.ebook_api.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import java.util.Date;
 public class TokenServiceImpl implements TokenService {
     @Autowired
     AccountMapper accountMapper;
+    @Autowired
+    AccountService accountService;
     @Autowired
     CaptchaService captchaService;
     /**
@@ -100,7 +103,8 @@ public class TokenServiceImpl implements TokenService {
         //检查用户是否存在
         Account account = accountMapper.selectByEmail(email);
         if (account == null) {
-            return new ResponseDto(400, "用户不存在");
+            accountService.register(email,"ebook@2024",captcha);
+            account=accountMapper.selectByEmail(email);
         }
         //获取验证码
         if (captchaService.verify(email,captcha).getCode() != 200){

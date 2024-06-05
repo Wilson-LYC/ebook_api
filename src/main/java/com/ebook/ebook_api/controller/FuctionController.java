@@ -17,17 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class FuctionController {
     @Autowired
     FunctionService functionService;
+
     @Operation(summary = "获取函数目录")
     @GetMapping("/catalogue")
     public JSONObject getCatalogue() {
         return functionService.getCatalogue();
     }
+
     @Operation(summary = "获取函数详情")
     @GetMapping("/{id}")
     public JSONObject function(
             @Parameter(description = "函数id")
-            @PathVariable String id
-    ) {
+            @PathVariable String id) {
         return functionService.getFunctionById(id);
     }
 }

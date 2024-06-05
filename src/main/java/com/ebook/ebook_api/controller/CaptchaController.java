@@ -16,11 +16,6 @@ public class CaptchaController {
     @Autowired
     CaptchaService captchaService;
 
-    /**
-     * 发送验证码到邮箱
-     * @param email 邮箱
-     * @return 发送结果
-     */
     @Operation(summary = "发送验证码到邮箱")
     @PostMapping("")
     public JSONObject getCaptcha(
@@ -29,12 +24,6 @@ public class CaptchaController {
         return captchaService.send(email);
     }
 
-    /**
-     * 验证验证码
-     * @param captcha 验证码
-     * @param email 邮箱
-     * @return 验证结果
-     */
     @Operation(summary = "验证验证码")
     @GetMapping("")
     public JSONObject verifyCaptcha(
