@@ -23,6 +23,11 @@ public class AiServiceImpl implements AiService {
         String content = aiMessage.getOutput().getChoices().get(0).getMessage().getContent();
         JSONObject data = new JSONObject();
         data.put("ans", content);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return new ResponseDto(200, "成功", data);
     }
 }
