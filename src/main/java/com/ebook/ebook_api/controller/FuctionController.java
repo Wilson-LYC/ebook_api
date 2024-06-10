@@ -18,17 +18,24 @@ public class FuctionController {
     @Autowired
     FunctionService functionService;
 
-    @Operation(summary = "获取函数目录")
-    @GetMapping("/catalogue")
-    public JSONObject getCatalogue() {
-        return functionService.getCatalogue();
+    @Operation(summary = "获取本周推荐函数")
+    @GetMapping("/recommended")
+    public JSONObject getRecommended() {
+        return functionService.getRecommended();
     }
-
-    @Operation(summary = "获取函数详情")
+    @Operation(summary = "获取类别")
+    @GetMapping("/category")
+    public JSONObject getCategory(){
+        return functionService.getCategory();
+    }
+    @Operation(summary = "根据类别id获取函数列表")
+    @GetMapping("/category/{id}")
+    public JSONObject getFunctionByCid(@Parameter(description = "函数id") @PathVariable int id) {
+        return functionService.getFunctionByCid(id);
+    }
+    @Operation(summary = "根据函数id获取函数")
     @GetMapping("/{id}")
-    public JSONObject function(
-            @Parameter(description = "函数id")
-            @PathVariable String id) {
+    public JSONObject getFunctionById(@Parameter(description = "函数id") @PathVariable int id) {
         return functionService.getFunctionById(id);
     }
 }

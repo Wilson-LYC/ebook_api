@@ -12,19 +12,21 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@TableName("article")
-public class Article {
+@TableName("user")
+public class User {
     private int id;
-    private String title;
-    private String content;
-    private int fid;
-    private int uid;
+    private String email;
+    private String password;
+    private String name="EBook用户";
+    private String role="user";//未启用
+    private String avatar="https://tdesign.gtimg.com/site/avatar.jpg";
     @TableField("createtime")
     private String createTime;
     @TableField("updatetime")
     private String updateTime;
 
     public JSONObject toJson() {
+        this.setPassword(null);
         return JSONObject.from(this);
     }
 }

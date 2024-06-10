@@ -46,7 +46,7 @@ public class CaptchaServiceImpl implements CaptchaService {
     }
 
     /**
-     * 保存验证码
+     * 保存验证码到redis
      * @param email 邮箱
      * @param captcha 验证码
      */
@@ -62,7 +62,7 @@ public class CaptchaServiceImpl implements CaptchaService {
     }
 
     /**
-     * 获取验证码
+     * 从redis获取验证码
      * @param email 邮箱
      * @return 验证码
      */
@@ -84,12 +84,12 @@ public class CaptchaServiceImpl implements CaptchaService {
     public ResponseDto send(String email) {
         //生成验证码
         JSONObject captcha= this.create();
-        //保存验证码
+        //保存验证码到redis
         try {
             this.saveCaptcha(email,captcha.getString("captcha"));
         }catch (Exception e){
-            log.error("验证码保存失败",e);
-            return new ResponseDto(500,"系统错误，请稍后再试");
+            log.error("验证码保存到redis时遇到错误",e);//记录错误日志，对内
+            return new ResponseDto(500,"系统错误，请稍后再试");//返回错误信息，对外
         }
         //生成邮件内容
         String content=this.getContent(captcha.getString("captcha"));
@@ -97,8 +97,8 @@ public class CaptchaServiceImpl implements CaptchaService {
         try{
             MailUtil.send(email,"公式E点通",content,false);
         }catch (MailException e){
-            log.error("邮箱验证码发送失败",e);
-            return new ResponseDto(500,"邮件发送失败，请检查邮箱是否正确");
+            log.error("验证码邮箱发送失败",e);
+            return new ResponseDto(500,"邮件发送失败，请稍后再试");
         }
         return new ResponseDto(200,"验证码发送成功");
     }

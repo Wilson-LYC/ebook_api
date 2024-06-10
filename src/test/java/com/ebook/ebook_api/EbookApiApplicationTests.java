@@ -1,6 +1,6 @@
 package com.ebook.ebook_api;
 
-import com.ebook.ebook_api.mapper.AccountMapper;
+import com.ebook.ebook_api.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,9 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 class EbookApiApplicationTests {
 
     @Autowired
-    AccountMapper accountMapper;
+    UserMapper userMapper;
     @Test
     void contextLoads() {
-        System.out.println(accountMapper.selectList(null));
+        System.out.println(userMapper.selectList(null));
     }
 }

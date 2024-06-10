@@ -4,7 +4,11 @@ import com.alibaba.fastjson2.JSONObject;
 import com.ebook.ebook_api.dto.ResponseDto;
 
 public interface FunctionService {
-    ResponseDto getCatalogue();
+    ResponseDto getRecommended();
 
-    ResponseDto getFunctionById(String id);
+    ResponseDto getCategory();
+
+    ResponseDto getFunctionByCid(int id);
+
+    ResponseDto getFunctionById(int id);
 }

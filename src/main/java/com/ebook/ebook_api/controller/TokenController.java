@@ -15,7 +15,7 @@ public class TokenController {
     @Autowired
     TokenService tokenService;
 
-    @Operation(summary = "登录")
+    @Operation(summary = "密码登录")
     @PostMapping("/pwd")
     public JSONObject login(
             @Parameter(description = "邮箱")
@@ -25,8 +25,8 @@ public class TokenController {
         return tokenService.loginByPwd(email, password);
     }
 
-    @Operation(summary = "验证码登录+自动注册")
-    @PostMapping("")
+    @Operation(summary = "验证码登录")
+    @PostMapping("/captcha")
     public JSONObject loginByCaptcha(
             @Parameter(description = "邮箱")
             @RequestParam String email,
@@ -34,10 +34,4 @@ public class TokenController {
             @RequestParam String captcha){
         return tokenService.loginByCaptcha(email, captcha);
     }
-
-    @GetMapping("/{token}")
-    public JSONObject verify(@PathVariable String token){
-        return tokenService.verify(token);
-    }
-
 }

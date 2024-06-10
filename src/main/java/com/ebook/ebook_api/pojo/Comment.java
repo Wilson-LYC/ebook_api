@@ -12,21 +12,17 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@TableName("comment")
+@TableName("comment_user")
 public class Comment {
     private int id;
-    private int aid; //文章id
-    private int cid; //评论id
-    private int re_cid; //回复评论id
+    private int fid; //文章id
     private int uid; //评论者id
-
+    private String username;
     private String content;
     @TableField("createtime")
     private String createTime;
     @TableField("updatetime")
     private String updateTime;
-
-
     public JSONObject toJson() {
         return JSONObject.from(this);
     }
