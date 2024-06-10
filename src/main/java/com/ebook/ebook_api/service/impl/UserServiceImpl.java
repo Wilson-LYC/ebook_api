@@ -99,14 +99,14 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 忘记密码(重置密码)
+     * 重置密码
      * @param email 邮箱
      * @param password 新密码
      * @param captcha 验证码
      * @return 重置密码结果
      */
     @Override
-    public ResponseDto forgetPassword(String email, String password, String captcha) {
+    public ResponseDto resetPassword(String email, String password, String captcha) {
         // 验证码校验
         if (captchaService.verify(email,captcha).getCode() != 200){
             return new ResponseDto(400, "验证码错误");
@@ -122,9 +122,9 @@ public class UserServiceImpl implements UserService {
             this.updateAccount(user);
         }catch (Exception e){
             log.error("重置密码时，mysql错误",e);
-            return new ResponseDto(500, "系统错误，重置密码失败");
+            return new ResponseDto(500, "系统错误");
         }
-        return new ResponseDto(200, "重置密码成功");
+        return new ResponseDto(200, "重置成功");
     }
 
     @Override

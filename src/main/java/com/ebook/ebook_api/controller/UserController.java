@@ -58,15 +58,15 @@ public class UserController {
         return userService.updateEmail(token, id, email, captcha);
     }
 
-    @Operation(summary = "忘记密码")
-    @PutMapping("/pwd/forget")
-    public JSONObject forgetPassword(
+    @Operation(summary = "重置密码")
+    @PutMapping("/password")
+    public JSONObject resetPassword(
             @Parameter(description = "邮箱")
             @RequestParam String email,
             @Parameter(description = "新密码")
             @RequestParam String password,
             @Parameter(description = "验证码")
             @RequestParam String captcha){
-        return userService.forgetPassword(email,password, captcha);
+        return userService.resetPassword(email,password, captcha);
     }
 }
