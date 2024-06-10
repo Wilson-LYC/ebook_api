@@ -44,6 +44,19 @@ public class UserController {
             @RequestParam String name){
         return userService.updateUserInfo(token, id, name);
     }
+    @Operation(summary = "换绑邮箱")
+    @PutMapping("/email")
+    public JSONObject updateEmail(
+            @Parameter(description = "token")
+            @RequestHeader(name = "Authorization") String token,
+            @Parameter(description = "用户id")
+            @RequestParam int id,
+            @Parameter(description = "邮箱")
+            @RequestParam String email,
+            @Parameter(description = "验证码")
+            @RequestParam String captcha){
+        return userService.updateEmail(token, id, email, captcha);
+    }
 
     @Operation(summary = "忘记密码")
     @PutMapping("/pwd/forget")

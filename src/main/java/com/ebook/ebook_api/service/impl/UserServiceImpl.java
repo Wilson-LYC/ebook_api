@@ -127,6 +127,29 @@ public class UserServiceImpl implements UserService {
         return new ResponseDto(200, "重置密码成功");
     }
 
+    @Override
+    public ResponseDto updateEmail(String token, int id, String email, String captcha) {
+        JSONObject tokenDecode = TokenUtil.decode(token);
+        if (tokenDecode.getInteger("code") != 200){
+            return new ResponseDto(400, "登录过期");
+        }
+        // 验证码校验
+        if (captchaService.verify(email,captcha).getCode() != 200){
+            return new ResponseDto(400, "验证码错误");
+        }
+        // 更新邮箱
+        User user = new User();
+        user.setId(id);
+        user.setEmail(email);
+        try{
+            userMapper.updateEmail(user);
+        }catch (Exception e){
+            log.error("更新邮箱时，mysql错误",e);
+            return new ResponseDto(500, "系统错误");
+        }
+        return new ResponseDto(200, "更新成功");
+    }
+
     /**
      * 更新帐号信息
      * @param user 帐号信息

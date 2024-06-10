@@ -8,4 +8,6 @@ public interface UserService {
     ResponseDto forgetPassword(String email, String password, String captcha);
     ResponseDto getUserByToken(String token);
     ResponseDto updateUserInfo(String token, int id, String name);
+
+    ResponseDto updateEmail(String token, int id, String email, String captcha);
 }
