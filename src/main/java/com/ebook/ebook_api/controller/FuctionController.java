@@ -6,10 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/function")
@@ -35,7 +32,31 @@ public class FuctionController {
     }
     @Operation(summary = "根据函数id获取函数")
     @GetMapping("/{id}")
-    public JSONObject getFunctionById(@Parameter(description = "函数id") @PathVariable int id) {
-        return functionService.getFunctionById(id);
+    public JSONObject getFunctionById(
+            @Parameter(description = "token")
+            @RequestHeader(name = "Authorization") String token,
+            @Parameter(description = "函数id")
+            @PathVariable int id) {
+        return functionService.getFunctionById(id,token);
     }
+    @Operation(summary = "点赞")
+    @PostMapping("/like/{fid}")
+    public JSONObject likeFunction(
+            @Parameter(description = "token")
+            @RequestHeader(name = "Authorization") String token,
+            @Parameter(description = "函数id")
+            @PathVariable int fid) {
+        return functionService.likeFunction(fid,token);
+    }
+
+    @Operation(summary = "取消点赞")
+    @DeleteMapping("/like/{fid}")
+    public JSONObject disLikeFunction(
+            @Parameter(description = "token")
+            @RequestHeader(name = "Authorization") String token,
+            @Parameter(description = "函数id")
+            @PathVariable int fid) {
+        return functionService.disLikeFunction(fid,token);
+    }
+
 }

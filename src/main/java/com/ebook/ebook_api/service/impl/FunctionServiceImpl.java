@@ -6,11 +6,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ebook.ebook_api.dto.ResponseDto;
 import com.ebook.ebook_api.mapper.CategoryMapper;
 import com.ebook.ebook_api.mapper.CommentMapper;
+import com.ebook.ebook_api.mapper.FunctionLikeMapper;
 import com.ebook.ebook_api.mapper.FunctionMapper;
 import com.ebook.ebook_api.pojo.Category;
 import com.ebook.ebook_api.pojo.Comment;
 import com.ebook.ebook_api.pojo.Function;
+import com.ebook.ebook_api.pojo.FunctionLike;
 import com.ebook.ebook_api.service.FunctionService;
+import com.ebook.ebook_api.service.TokenService;
+import com.ebook.ebook_api.util.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,10 @@ public class FunctionServiceImpl implements FunctionService {
     CategoryMapper categoryMapper;
     @Autowired
     CommentMapper commentMapper;
+    @Autowired
+    FunctionLikeMapper functionLikeMapper;
+    @Autowired
+    TokenService tokenService;
 
     @Override
     public ResponseDto getRecommended() {
@@ -79,7 +87,11 @@ public class FunctionServiceImpl implements FunctionService {
     }
 
     @Override
-    public ResponseDto getFunctionById(int id) {
+    public ResponseDto getFunctionById(int id, String token) {
+        JSONObject tokenJson = TokenUtil.decode(token);
+        if (tokenJson.getInteger("code")!=200) {
+            return new ResponseDto(400, "未登录");
+        }
         // 获取函数
         Function function;
         try {
@@ -100,7 +112,66 @@ public class FunctionServiceImpl implements FunctionService {
             log.error("获取评论数量失败（mysql）",e);
             return new ResponseDto(500, "系统错误");
         }
+        // 获取点赞数量
+        QueryWrapper<FunctionLike> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("fid", id);
+        Long likeCount;
+        try {
+            likeCount = functionLikeMapper.selectCount(queryWrapper1);
+        }catch (Exception e) {
+            log.error("获取点赞数量失败（mysql）",e);
+            return new ResponseDto(500, "系统错误");
+        }
         data.put("commentCount", commentCount);
+        data.put("likeCount", likeCount);
+        //检查用户是否点赞
+        QueryWrapper<FunctionLike> queryWrapper2 = new QueryWrapper<>();
+        queryWrapper2.eq("fid", id);
+        queryWrapper2.eq("uid", tokenJson.getInteger("uid"));
+        Long like;
+        try {
+            like = functionLikeMapper.selectCount(queryWrapper2);
+        }catch (Exception e) {
+            log.error("检查用户是否点赞失败（mysql）",e);
+            return new ResponseDto(500, "系统错误");
+        }
+        data.put("like", like>0);
         return new ResponseDto(200, "成功", data);
+    }
+
+    @Override
+    public ResponseDto likeFunction(int fid, String token) {
+        JSONObject tokenJson = TokenUtil.decode(token);
+        if (tokenJson.getInteger("code")!=200) {
+            return new ResponseDto(400, "未登录");
+        }
+        FunctionLike functionLike = new FunctionLike();
+        functionLike.setFid(fid);
+        functionLike.setUid(tokenJson.getInteger("uid"));
+        try {
+            functionLikeMapper.insert(functionLike);
+        }catch (Exception e) {
+            log.error("点赞失败（mysql）",e);
+            return new ResponseDto(500, "系统错误");
+        }
+        return new ResponseDto(200, "成功");
+    }
+
+    @Override
+    public ResponseDto disLikeFunction(int fid, String token) {
+        JSONObject tokenJson = TokenUtil.decode(token);
+        if (tokenJson.getInteger("code")!=200) {
+            return new ResponseDto(400, "未登录");
+        }
+        QueryWrapper<FunctionLike> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("fid", fid);
+        queryWrapper.eq("uid", tokenJson.getInteger("uid"));
+        try {
+            functionLikeMapper.delete(queryWrapper);
+        }catch (Exception e) {
+            log.error("取消点赞失败（mysql）",e);
+            return new ResponseDto(500, "系统错误");
+        }
+        return new ResponseDto(200, "成功");
     }
 }

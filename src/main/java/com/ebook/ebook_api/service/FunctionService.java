@@ -10,5 +10,9 @@ public interface FunctionService {
 
     ResponseDto getFunctionByCid(int id);
 
-    ResponseDto getFunctionById(int id);
+    ResponseDto getFunctionById(int id, String token);
+
+    ResponseDto likeFunction(int fid, String token);
+
+    JSONObject disLikeFunction(int fid, String token);
 }
